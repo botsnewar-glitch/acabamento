@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>101 Burger House — Chamuscado com carinho</title>
+<meta name="description" content="101 Burger House. Blend 100% carne, pão brioche selado na chapa e queijo derretido na hora. Peça já.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0c0c0d;
+    --bg-soft:#131315;
+    --surface: rgba(255,255,255,0.045);
+    --surface-hover: rgba(255,255,255,0.075);
+    --text:#f6f3ec;
+    --text-dim:#a49e93;
+    --flame:#ff5a36;
+    --flame-soft: rgba(255,90,54,0.16);
+    --cheese:#ffcc4d;
+    --line: rgba(255,255,255,0.09);
+    --shadow: 0 30px 70px -25px rgba(0,0,0,0.65);
+    --glow: 0 0 0 1px rgba(255,90,54,0.35), 0 20px 50px -15px rgba(255,90,54,0.35);
+    --ease: cubic-bezier(.16,.84,.32,1);
+    --radius: 26px;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter', sans-serif;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  img{display:block;max-width:100%;}
+  a{color:inherit;text-decoration:none;}
+  button{font-family:inherit;}
+  ::selection{background:var(--flame);color:#0c0c0d;}
+  :focus-visible{ outline: 2px solid var(--cheese); outline-offset: 4px; border-radius:4px; }
+
+  h1,h2,h3{font-family:'Bricolage Grotesque', sans-serif; font-weight:700; letter-spacing:-0.02em;}
+  .serif-italic{font-family:'Instrument Serif', serif; font-style:italic; font-weight:400;}
+  .grad-text{
+    background:linear-gradient(100deg, var(--cheese) 0%, var(--flame) 55%, var(--flame) 100%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+
+  .wrap{max-width:1180px; margin:0 auto; padding:0 28px;}
+
+  /* ---------- Reveal on scroll ---------- */
+  .reveal{opacity:0; transform:translateY(26px); transition:opacity .8s var(--ease), transform .8s var(--ease);}
+  .reveal.in-view{opacity:1; transform:translateY(0);}
+  .reveal-stagger > *{opacity:0; transform:translateY(24px); transition:opacity .7s var(--ease), transform .7s var(--ease);}
+  .reveal-stagger.in-view > *{opacity:1; transform:translateY(0);}
+  .reveal-stagger.in-view > *:nth-child(1){transition-delay:.05s;}
+  .reveal-stagger.in-view > *:nth-child(2){transition-delay:.15s;}
+  .reveal-stagger.in-view > *:nth-child(3){transition-delay:.25s;}
+
+  /* ---------- Nav ---------- */
+  header.site-nav{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    padding:18px 0;
+    transition: background .35s var(--ease), padding .35s var(--ease), border-color .35s var(--ease);
+    border-bottom:1px solid transparent;
+  }
+  header.site-nav.scrolled{
+    background:rgba(12,12,13,0.72);
+    backdrop-filter: blur(16px) saturate(140%);
+    border-bottom:1px solid var(--line);
+    padding:12px 0;
+  }
+  .nav-inner{
+    max-width:1180px; margin:0 auto; padding:0 28px;
+    display:flex; align-items:center; justify-content:space-between; gap:20px;
+  }
+  .brand{display:flex; align-items:baseline; gap:6px; font-family:'Bricolage Grotesque',sans-serif; font-size:1.2rem; font-weight:700;}
+  .brand .num{ font-weight:800; }
+  .brand .word{color:var(--text-dim); font-weight:500;}
+  .nav-links{display:flex; align-items:center; gap:8px; font-weight:500; font-size:0.92rem;}
+  .nav-links a{position:relative; padding:9px 16px; border-radius:999px; color:var(--text-dim); transition:color .2s var(--ease), background .2s var(--ease);}
+  .nav-links a:hover, .nav-links a:focus-visible{color:var(--text); background:var(--surface);}
+  .cta-btn{
+    background:linear-gradient(120deg, var(--flame), #ff8a4d); color:#150c08; font-weight:700;
+    font-size:0.88rem; padding:11px 22px; border-radius:999px; border:none;
+    box-shadow:0 10px 26px -10px rgba(255,90,54,0.65);
+    transition:transform .25s var(--ease), box-shadow .25s var(--ease), filter .25s var(--ease);
+    cursor:pointer; white-space:nowrap;
+  }
+  .cta-btn:hover{transform:translateY(-2px); box-shadow:0 16px 34px -10px rgba(255,90,54,0.8); filter:brightness(1.05);}
+  @media (max-width:780px){ .nav-links{display:none;} }
+
+  /* ---------- Hero ---------- */
+  .hero{ position:relative; height:220vh; }
+  .hero-sticky{
+    position:sticky; top:0; height:100vh; overflow:hidden;
+    display:flex; align-items:center; justify-content:center;
+    background:var(--bg);
+  }
+  .mesh{
+    position:absolute; inset:-10%; z-index:0; filter:blur(70px); opacity:0.55;
+    background:
+      radial-gradient(38% 32% at 18% 22%, rgba(255,90,54,0.55), transparent 70%),
+      radial-gradient(32% 28% at 82% 18%, rgba(255,204,77,0.4), transparent 70%),
+      radial-gradient(40% 36% at 60% 88%, rgba(255,90,54,0.28), transparent 70%);
+    animation: meshDrift 16s ease-in-out infinite alternate;
+  }
+  @keyframes meshDrift{
+    from{ transform:scale(1) translate(0,0); }
+    to{ transform:scale(1.08) translate(-2%, 2%); }
+  }
+  .grid-overlay{
+    position:absolute; inset:0; z-index:1; opacity:0.5;
+    background-image:
+      linear-gradient(to right, rgba(255,255,255,0.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-size:64px 64px;
+    mask-image: radial-gradient(ellipse 70% 70% at 50% 40%, black 30%, transparent 80%);
+  }
+  .hero-content{ position:relative; z-index:5; text-align:center; padding:0 20px; max-width:780px; }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px; font-size:0.85rem; font-weight:600;
+    color:var(--text-dim); letter-spacing:0.02em; margin-bottom:18px;
+    padding:7px 16px; border:1px solid var(--line); border-radius:999px; background:var(--surface);
+  }
+  .eyebrow .dot{width:6px; height:6px; border-radius:50%; background:var(--flame); box-shadow:0 0 10px var(--flame);}
+  .hero h1{
+    font-size:clamp(3rem, 9.5vw, 6.6rem); line-height:0.95; color:var(--text);
+  }
+  .hero p.sub{
+    margin-top:22px; font-size:clamp(1rem,1.6vw,1.15rem); color:var(--text-dim); font-weight:400;
+    max-width:480px; margin-left:auto; margin-right:auto; line-height:1.6;
+  }
+  .hero-ctas{margin-top:36px; display:flex; gap:14px; justify-content:center; flex-wrap:wrap;}
+  .btn-ghost{
+    border:1px solid var(--line); color:var(--text); padding:11px 24px; border-radius:999px;
+    font-weight:600; font-size:0.88rem; background:var(--surface);
+    transition: background .2s var(--ease), transform .2s var(--ease), border-color .2s var(--ease);
+  }
+  .btn-ghost:hover{background:var(--surface-hover); border-color:rgba(255,255,255,0.2); transform:translateY(-2px);}
+
+  .hero-burger{
+    position:absolute; z-index:3; width:min(46vw, 500px);
+    filter:drop-shadow(0 45px 70px rgba(0,0,0,0.6));
+    will-change:transform, opacity;
+  }
+  .hero-burger .frame{
+    position:relative; border-radius:28px; overflow:hidden; border:1px solid rgba(255,255,255,0.12);
+  }
+  .hero-burger img{width:100%; height:auto; display:block;}
+  .hero-burger .sheen{
+    position:absolute; inset:0; background:linear-gradient(160deg, rgba(255,255,255,0.14), transparent 40%);
+    pointer-events:none;
+  }
+
+  .scroll-cue{
+    position:absolute; bottom:30px; left:50%; transform:translateX(-50%); z-index:6;
+    font-size:0.72rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--text-dim);
+    display:flex; flex-direction:column; align-items:center; gap:10px; opacity:0.75;
+  }
+  .scroll-cue .bar{width:1px; height:32px; background:rgba(255,255,255,0.18); position:relative; overflow:hidden;}
+  .scroll-cue .bar::after{
+    content:""; position:absolute; top:-100%; left:0; width:100%; height:100%; background:var(--flame);
+    animation: cueDrop 1.7s infinite ease-in-out;
+  }
+  @keyframes cueDrop{ to{ top:100%; } }
+
+  /* ---------- Sections shared ---------- */
+  section{position:relative; padding:130px 0;}
+  .divider{ height:1px; background:linear-gradient(90deg, transparent, var(--line) 20%, var(--line) 80%, transparent); }
+  .section-head{max-width:600px; margin-bottom:60px;}
+  .section-head .tag{
+    color:var(--flame); font-weight:600; text-transform:uppercase; letter-spacing:0.14em; font-size:0.76rem;
+  }
+  .section-head h2{font-size:clamp(2rem,4.2vw,3.1rem); margin-top:12px; color:var(--text); line-height:1.05;}
+  .section-head p{margin-top:16px; color:var(--text-dim); font-size:1.02rem; line-height:1.65;}
+
+  /* ---------- Menu / Destaques ---------- */
+  .menu-section{background:var(--bg-soft);}
+  .menu-grid{display:grid; grid-template-columns:1fr 1fr; gap:28px;}
+  @media (max-width:860px){ .menu-grid{grid-template-columns:1fr;} }
+
+  .menu-card{
+    position:relative; background:var(--surface); border-radius:var(--radius); overflow:hidden;
+    border:1px solid var(--line);
+    transition: transform .45s var(--ease), box-shadow .45s var(--ease), border-color .45s var(--ease);
+  }
+  .menu-card:hover{transform:translateY(-6px); box-shadow:var(--glow); border-color:rgba(255,90,54,0.4);}
+  .menu-card .photo-wrap{aspect-ratio: 4/3.5; overflow:hidden; position:relative;}
+  .menu-card .photo-wrap img{width:100%; height:100%; object-fit:cover; transition:transform .7s var(--ease);}
+  .menu-card:hover .photo-wrap img{transform:scale(1.05);}
+  .menu-card .photo-wrap::after{
+    content:""; position:absolute; inset:0; background:linear-gradient(0deg, rgba(12,12,13,0.55), transparent 45%);
+  }
+  .price-tag{
+    position:absolute; top:16px; right:16px; z-index:2; background:rgba(12,12,13,0.7); backdrop-filter:blur(8px);
+    border:1px solid rgba(255,255,255,0.14); color:var(--cheese);
+    font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:1.05rem; padding:7px 15px; border-radius:999px;
+  }
+  .menu-card .info{padding:26px 26px 30px;}
+  .menu-card .info h3{font-size:1.5rem; color:var(--text); font-weight:700;}
+  .menu-card .info p{margin-top:10px; color:var(--text-dim); line-height:1.6; font-size:0.96rem;}
+  .menu-card .tags{margin-top:18px; display:flex; gap:8px; flex-wrap:wrap;}
+  .menu-card .tags span{
+    font-size:0.7rem; text-transform:uppercase; letter-spacing:0.05em; font-weight:600;
+    border:1px solid var(--line); color:var(--text-dim); padding:6px 11px; border-radius:999px;
+  }
+
+  .menu-footnote{margin-top:48px; text-align:center; color:var(--text-dim); font-size:0.95rem;}
+  .menu-footnote a{color:var(--flame); font-weight:600; border-bottom:1px solid rgba(255,90,54,0.4);}
+
+  /* ---------- Metodo / features ---------- */
+  .method-section .wrap{
+    display:grid; grid-template-columns:0.95fr 1.05fr; gap:70px; align-items:center;
+  }
+  @media (max-width:900px){ .method-section .wrap{grid-template-columns:1fr;} }
+  .method-visual{position:relative; border-radius:var(--radius); overflow:hidden; border:1px solid var(--line);}
+  .method-visual img{display:block; width:100%; height:100%; object-fit:cover;}
+  .method-visual .badge{
+    position:absolute; bottom:18px; left:18px; background:rgba(12,12,13,0.65); backdrop-filter:blur(10px);
+    border:1px solid rgba(255,255,255,0.14); color:var(--text);
+    padding:10px 18px; border-radius:999px; font-size:0.82rem; font-weight:600;
+    display:flex; align-items:center; gap:8px;
+  }
+  .method-visual .badge .dot{width:7px; height:7px; border-radius:50%; background:var(--cheese);}
+  .feature-list{display:flex; flex-direction:column; gap:26px;}
+  .feature{display:flex; gap:18px; align-items:flex-start; padding:22px; border:1px solid var(--line); border-radius:20px; background:var(--surface); transition:background .3s var(--ease), border-color .3s var(--ease);}
+  .feature:hover{background:var(--surface-hover); border-color:rgba(255,255,255,0.16);}
+  .feature .icon{
+    flex:none; width:46px; height:46px; border-radius:13px; background:var(--flame-soft);
+    display:flex; align-items:center; justify-content:center; font-size:1.25rem;
+  }
+  .feature h3{font-size:1.08rem; color:var(--text); font-family:'Inter',sans-serif; font-weight:700; letter-spacing:-0.01em;}
+  .feature p{margin-top:6px; color:var(--text-dim); font-size:0.94rem; line-height:1.55;}
+
+  /* ---------- Gallery ---------- */
+  .gallery-section{background:var(--bg-soft); overflow:hidden;}
+  .gallery-track{
+    display:flex; gap:20px; width:max-content;
+    animation: scrollLeft 30s linear infinite;
+  }
+  .gallery-track img{
+    height:320px; width:auto; border-radius:20px; border:1px solid var(--line);
+  }
+  @keyframes scrollLeft{ from{transform:translateX(0);} to{transform:translateX(-50%);} }
+  .gallery-section:hover .gallery-track{animation-play-state:paused;}
+
+  /* ---------- Localizacao / CTA final ---------- */
+  .contact-section{ position:relative; }
+  .contact-section::before{
+    content:""; position:absolute; inset:0; z-index:0;
+    background: radial-gradient(60% 50% at 50% 0%, rgba(255,90,54,0.14), transparent 70%);
+  }
+  .contact-grid{position:relative; z-index:1; display:grid; grid-template-columns:1.1fr 0.9fr; gap:60px;}
+  @media (max-width:900px){ .contact-grid{grid-template-columns:1fr;} }
+  .contact-grid h2{font-size:clamp(2.1rem,4.6vw,3.3rem); color:var(--text); line-height:1.03;}
+  .contact-info{margin-top:30px; display:flex; flex-direction:column; gap:18px;}
+  .contact-info .row{display:flex; gap:14px; align-items:flex-start; color:var(--text-dim);}
+  .contact-info .row strong{color:var(--text); display:block; font-size:0.82rem; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:3px; font-weight:700;}
+  .contact-ctas{margin-top:34px; display:flex; gap:16px; flex-wrap:wrap;}
+
+  .order-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:34px;
+    backdrop-filter:blur(10px);
+  }
+  .order-card h3{font-family:'Inter',sans-serif; font-weight:700; font-size:1.05rem; color:var(--text);}
+  .order-card p{margin-top:8px; color:var(--text-dim); font-size:0.94rem;}
+  .order-options{margin-top:22px; display:flex; flex-direction:column; gap:10px;}
+  .order-options a{
+    display:flex; align-items:center; justify-content:space-between; padding:14px 18px;
+    border:1px solid var(--line); border-radius:14px; font-weight:600; transition: all .25s var(--ease);
+  }
+  .order-options a:hover{border-color:var(--flame); background:var(--flame-soft); transform:translateX(4px);}
+
+  footer{
+    border-top:1px solid var(--line);
+    padding:40px 0; text-align:center; color:var(--text-dim); font-size:0.85rem;
+  }
+  footer .brand{justify-content:center; margin-bottom:10px;}
+
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    .hero-burger{transition:none !important;}
+    .gallery-track, .mesh{animation:none;}
+    .scroll-cue .bar::after{animation:none;}
+    .reveal, .reveal-stagger > *{opacity:1; transform:none; transition:none;}
+  }
+</style>
+</head>
+<body>
+
+<header class="site-nav" id="siteNav">
+  <div class="nav-inner">
+    <a href="#top" class="brand"><span class="num grad-text">101</span><span class="word">Burger House</span></a>
+    <nav class="nav-links">
+      <a href="#cardapio">Cardápio</a>
+      <a href="#metodo">Método</a>
+      <a href="#galeria">Galeria</a>
+      <a href="#contato">Localização</a>
+    </nav>
+    <button class="cta-btn" onclick="document.getElementById('contato').scrollIntoView({behavior:'smooth'})">Peça já</button>
+  </div>
+</header>
+
+<div id="top"></div>
+
+<section class="hero" id="hero">
+  <div class="hero-sticky">
+    <div class="mesh"></div>
+    <div class="grid-overlay"></div>
+
+    <div class="hero-burger" id="heroBurger">
+      <div class="frame">
+        <img src="assets/burger-stack.jpg" alt="Hambúrguer 101 Burger House com bacon, queijo cheddar derretido e picles" width="1113" height="1209">
+        <div class="sheen"></div>
+      </div>
+    </div>
+
+    <div class="hero-content">
+      <span class="eyebrow"><span class="dot"></span> aberto de terça a domingo</span>
+      <h1>101 <span class="grad-text">Burger</span><br>House</h1>
+      <p class="sub"><span class="serif-italic">Sem frescura, só sabor.</span> Blend 100% carne, pão brioche selado na chapa e queijo derretendo até a última mordida.</p>
+      <div class="hero-ctas">
+        <button class="cta-btn" onclick="document.getElementById('cardapio').scrollIntoView({behavior:'smooth'})">Ver cardápio</button>
+        <a href="#contato" class="btn-ghost">Fazer pedido</a>
+      </div>
+    </div>
+
+    <div class="scroll-cue"><span>role a página</span><span class="bar"></span></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section class="menu-section" id="cardapio">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="tag">Destaques da casa</span>
+      <h2>Os que não saem<br>do cardápio</h2>
+      <p>Cada burger é montado na hora, carne no ponto certo e ingredientes frescos. Aqui vão os dois queridinhos da galera.</p>
+    </div>
+
+    <div class="menu-grid reveal-stagger">
+      <article class="menu-card">
+        <div class="photo-wrap">
+          <img src="assets/burger-stack.jpg" alt="101 Bacon Cheese: hambúrguer com bacon crocante, cheddar e picles em pão brioche" loading="lazy">
+          <span class="price-tag">R$ 32</span>
+        </div>
+        <div class="info">
+          <h3>101 Bacon Cheese</h3>
+          <p>Blend suculento, bacon extra crocante, cheddar derretido, picles e alface americana no pão brioche amanteigado.</p>
+          <div class="tags"><span>Mais pedido</span><span>Bacon extra</span></div>
+        </div>
+      </article>
+
+      <article class="menu-card">
+        <div class="photo-wrap">
+          <img src="assets/burger-duo.jpg" alt="Hambúrgueres da 101 Burger House com onion rings, bacon e molho especial" loading="lazy">
+          <span class="price-tag">R$ 36</span>
+        </div>
+        <div class="info">
+          <h3>101 Onion Crunch</h3>
+          <p>Blend grelhado no ponto, anéis de cebola empanados crocantes, bacon, cheddar e molho especial da casa.</p>
+          <div class="tags"><span>Crocante</span><span>Molho da casa</span></div>
+        </div>
+      </article>
+    </div>
+
+    <p class="menu-footnote reveal">Quer ver o cardápio completo com todos os combos? <a href="#contato">Fale com a gente</a>.</p>
+  </div>
+</section>
+
+<section class="method-section" id="metodo">
+  <div class="wrap">
+    <div class="method-visual reveal">
+      <img src="assets/burger-duo.jpg" alt="Hambúrguer 101 Burger House sendo segurado, mostrando as camadas de recheio" loading="lazy">
+      <div class="badge"><span class="dot"></span> 100% artesanal</div>
+    </div>
+    <div class="reveal">
+      <span class="tag" style="color:var(--flame); font-weight:600; text-transform:uppercase; letter-spacing:0.14em; font-size:0.76rem;">Nosso método</span>
+      <h2 style="font-size:clamp(1.9rem,3.8vw,2.6rem); color:var(--text); margin:12px 0 32px; line-height:1.08;">Chamuscado<br>com carinho</h2>
+      <div class="feature-list">
+        <div class="feature">
+          <div class="icon">🔥</div>
+          <div><h3>Selado na chapa quente</h3><p>Carne grelhada em alta temperatura pra travar o suco por dentro e criar aquela casquinha por fora.</p></div>
+        </div>
+        <div class="feature">
+          <div class="icon">🧀</div>
+          <div><h3>Queijo derretido na hora</h3><p>Cada camada de cheddar é derretida no momento da montagem, nunca antes.</p></div>
+        </div>
+        <div class="feature">
+          <div class="icon">🍞</div>
+          <div><h3>Pão brioche selado</h3><p>Tostado na manteiga até ficar crocante por fora e macio por dentro.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section class="gallery-section" id="galeria">
+  <div class="wrap reveal" style="margin-bottom:44px;">
+    <div class="section-head" style="margin-bottom:0;">
+      <span class="tag">Direto da chapa</span>
+      <h2>Galeria</h2>
+    </div>
+  </div>
+  <div class="gallery-track">
+    <img src="assets/burger-stack.jpg" alt="Hambúrguer 101 Burger House">
+    <img src="assets/burger-duo.jpg" alt="Dois hambúrgueres 101 Burger House">
+    <img src="assets/burger-stack.jpg" alt="Hambúrguer 101 Burger House">
+    <img src="assets/burger-duo.jpg" alt="Dois hambúrgueres 101 Burger House">
+    <img src="assets/burger-stack.jpg" alt="Hambúrguer 101 Burger House">
+    <img src="assets/burger-duo.jpg" alt="Dois hambúrgueres 101 Burger House">
+  </div>
+</section>
+
+<section class="contact-section" id="contato">
+  <div class="wrap contact-grid">
+    <div class="reveal">
+      <span class="tag" style="color:var(--flame); font-weight:600; text-transform:uppercase; letter-spacing:0.14em; font-size:0.76rem;">Vem pra cá</span>
+      <h2 style="margin-top:12px;">Sua fome tem<br>endereço certo</h2>
+      <div class="contact-info">
+        <div class="row">📍<div><strong>Endereço</strong>Rua Exemplo, 101 — Centro</div></div>
+        <div class="row">🕒<div><strong>Horário</strong>Terça a domingo, 18h às 23h</div></div>
+        <div class="row">📞<div><strong>Contato</strong>(00) 00000-0000</div></div>
+      </div>
+      <div class="contact-ctas">
+        <button class="cta-btn">Chamar no WhatsApp</button>
+        <a href="#" class="btn-ghost">Ver no mapa</a>
+      </div>
+    </div>
+
+    <div class="order-card reveal">
+      <h3>Peça pelo app</h3>
+      <p>Escolha por onde prefere pedir e receba seu burger quentinho.</p>
+      <div class="order-options">
+        <a href="#">iFood <span>→</span></a>
+        <a href="#">Rappi <span>→</span></a>
+        <a href="#">WhatsApp <span>→</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="brand"><span class="num grad-text">101</span><span class="word">Burger House</span></div>
+  <p>© 2026 101 Burger House. Todos os direitos reservados.</p>
+</footer>
+
+<script>
+  // Scroll-driven hero burger movement, smoothed with lerp for a fluid, modern feel.
+  (function(){
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var hero = document.getElementById('hero');
+    var burger = document.getElementById('heroBurger');
+    if(!hero || !burger) return;
+
+    var current = 0, target = 0;
+
+    function computeTarget(){
+      var rect = hero.getBoundingClientRect();
+      var heroHeight = hero.offsetHeight;
+      var viewportH = window.innerHeight;
+      var scrolled = -rect.top;
+      target = Math.min(Math.max(scrolled / (heroHeight - viewportH), 0), 1);
+    }
+
+    function apply(p){
+      var rotate = p * 320;
+      var translateY = p * window.innerHeight * 0.5;
+      var translateX = Math.sin(p * Math.PI) * 70;
+      var scale = 1 - p * 0.3;
+      var opacity = 1 - Math.max(0, (p - 0.78) / 0.22);
+      burger.style.transform =
+        'translate(' + translateX + 'px,' + translateY + 'px) rotate(' + rotate + 'deg) scale(' + scale + ')';
+      burger.style.opacity = opacity;
+    }
+
+    function loop(){
+      if(reduceMotion){ apply(0); return; }
+      current += (target - current) * 0.12;
+      apply(current);
+      requestAnimationFrame(loop);
+    }
+
+    window.addEventListener('scroll', computeTarget, {passive:true});
+    window.addEventListener('resize', computeTarget);
+    computeTarget();
+    requestAnimationFrame(loop);
+  })();
+
+  // Nav background on scroll
+  (function(){
+    var nav = document.getElementById('siteNav');
+    window.addEventListener('scroll', function(){
+      nav.classList.toggle('scrolled', window.scrollY > 40);
+    }, {passive:true});
+  })();
+
+  // Scroll-reveal for sections and cards
+  (function(){
+    var targets = document.querySelectorAll('.reveal, .reveal-stagger');
+    if(!('IntersectionObserver' in window)){
+      targets.forEach(function(t){ t.classList.add('in-view'); });
+      return;
+    }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          entry.target.classList.add('in-view');
+          io.unobserve(entry.target);
+        }
+      });
+    }, {threshold:0.15, rootMargin:'0px 0px -60px 0px'});
+    targets.forEach(function(t){ io.observe(t); });
+  })();
+</script>
+
+</body>
+</html>
